@@ -10,20 +10,20 @@ from fertilizer_prediction_pipeline import predict_fertilizer
 app = Flask(__name__)
 database.init_db()
 
-# --- Load data for dropdowns ---
-YIELD_DATA_PATH = os.path.join('data', 'crop_production.csv')
+# --- MODIFICATION: Use the AUGMENTED file for yield dropdowns ---
+YIELD_DATA_PATH = os.path.join('data', 'crop_production_augmented.csv')
 FERTILIZER_DATA_PATH = os.path.join('data', 'Fertilizer Prediction.csv')
 
 yield_df = pd.read_csv(YIELD_DATA_PATH).dropna(subset=["Production"])
 fertilizer_df = pd.read_csv(FERTILIZER_DATA_PATH)
 
-# Get unique values for yield dropdowns
+# Get unique values for dropdowns
 unique_states = sorted(yield_df['State_Name'].unique())
 unique_yield_seasons = sorted(yield_df['Season'].unique())
 unique_yield_crops = sorted(yield_df['Crop'].unique())
-
-# --- MODIFICATION: Get unique soil types for the yield form ---
-unique_soil_types = sorted(fertilizer_df['Soil Type'].unique())
+# --- MODIFICATION: Now get Soil Type from the yield_df as well ---
+unique_soil_types = sorted(yield_df['Soil Type'].unique())
+unique_crop_types = sorted(fertilizer_df['Crop Type'].unique())
 
 
 @app.route('/')
@@ -36,8 +36,6 @@ def crop_recommend():
 
 @app.route('/yield-predict')
 def yield_predict():
-    """Renders the yield prediction page."""
-    # --- MODIFICATION: Pass unique_soil_types to the template ---
     return render_template(
         'yield.html',
         states=unique_states,
@@ -61,7 +59,7 @@ def fertilizer_recommend():
     
 @app.route('/predict', methods=['POST'])
 def predict():
-    # ... (no changes needed in this function) ...
+    # ... (no changes) ...
     try:
         data = [float(request.form[key]) for key in ['N', 'P', 'K', 'temperature', 'humidity', 'ph', 'rainfall']]
         crop_prediction = predict_crop(data)
@@ -72,23 +70,20 @@ def predict():
 
 @app.route('/predict_yield', methods=['POST'])
 def predict_yield_endpoint():
-    """Handles yield prediction requests."""
     if request.method == 'POST':
         try:
-            # --- MODIFICATION: Accept new fields but only use the ones the model needs ---
-            # The form will send 'Rainfall' and 'Soil_Type', but we ignore them here
-            # because the current yield model was not trained on them.
+            # --- MODIFICATION: Pass ALL new fields to the prediction function ---
             data_for_prediction = {
                 'Area': float(request.form['Area']),
                 'State_Name': request.form['State_Name'],
                 'District_Name': request.form['District_Name'],
                 'Season': request.form['Season'],
-                'Crop': request.form['Crop']
+                'Crop': request.form['Crop'],
+                'Rainfall': float(request.form['Rainfall']),
+                'Soil Type': request.form['Soil_Type']
             }
             
             yield_prediction = predict_crop_yield(data_for_prediction)
-
-            # Log the prediction with the data the model used
             database.log_yield_prediction(data_for_prediction, yield_prediction)
             
             return jsonify({'prediction': yield_prediction})
@@ -97,7 +92,7 @@ def predict_yield_endpoint():
 
 @app.route('/predict_fertilizer', methods=['POST'])
 def predict_fertilizer_endpoint():
-    # ... (no changes needed in this function) ...
+    # ... (no changes) ...
     try:
         data_for_prediction = {
             'Temperature': float(request.form['Temperature']),
@@ -117,7 +112,7 @@ def predict_fertilizer_endpoint():
 
 @app.route('/history')
 def history():
-    # ... (no changes needed in this function) ...
+    # ... (no changes) ...
     crop_logs = database.fetch_crop_logs()
     yield_logs = database.fetch_yield_logs()
     fertilizer_logs = database.fetch_fertilizer_logs()
