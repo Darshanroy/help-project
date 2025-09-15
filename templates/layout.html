@@ -12,17 +12,23 @@
 </head>
 <body class="bg-gray-100" style='font-family: "Space Grotesk", sans-serif;'>
     <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
-        <header class="bg-gray-800 text-white shadow-md px-4 md:px-10 py-3 flex items-center justify-between">
+        
+        <!-- Header Section -->
+        <header class="bg-gray-800 text-white shadow-md px-4 md:px-10 py-3 flex items-center justify-between sticky top-0 z-50">
             <a href="/" class="flex items-center gap-3">
                 <span class="material-symbols-outlined text-4xl text-green-400">eco</span>
                 <h2 class="text-2xl font-bold tracking-tight">Harvest Helper</h2>
             </a>
+            
+            <!-- Navigation Links -->
             <nav class="hidden md:flex items-center gap-8">
-                <a class="text-sm font-medium hover:text-green-300 transition-colors" href="/">Dashboard</a>
-                <a class="text-sm font-medium hover:text-green-300 transition-colors" href="/crop-recommend">Crop</a>
-                <a class="text-sm font-medium hover:text-green-300 transition-colors" href="/yield-predict">Yield</a>
-                <a class="text-sm font-medium hover:text-green-300 transition-colors" href="/fertilizer-recommend">Fertilizer</a>
+                <a class="text-sm font-medium hover:text-green-300 transition-colors" href="{{ url_for('home') }}">Dashboard</a>
+                <a class="text-sm font-medium hover:text-green-300 transition-colors" href="{{ url_for('crop_recommend') }}">Crop</a>
+                <a class="text-sm font-medium hover:text-green-300 transition-colors" href="{{ url_for('yield_predict') }}">Yield</a>
+                <a class="text-sm font-medium hover:text-green-300 transition-colors" href="{{ url_for('fertilizer_recommend') }}">Fertilizer</a>
+                <a class="text-sm font-medium hover:text-green-300 transition-colors" href="{{ url_for('history') }}">History</a>
             </nav>
+            
             <div class="flex items-center gap-4">
                 <button class="md:hidden">
                     <span class="material-symbols-outlined text-3xl">menu</span>
@@ -30,15 +36,18 @@
             </div>
         </header>
 
+        <!-- Main Content Block -->
         <main class="flex-grow">
             {% block content %}{% endblock %}
         </main>
 
+        <!-- Footer Section -->
         <footer class="bg-gray-800 text-white py-8">
             <div class="container mx-auto px-4 text-center text-sm">
                 <p>© 2025 Harvest Helper. All rights reserved.</p>
             </div>
         </footer>
+        
     </div>
 </body>
 </html>
