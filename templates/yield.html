@@ -48,6 +48,22 @@
                         {% for crop in crops %}<option value="{{ crop }}">{{ crop }}</option>{% endfor %}
                     </select>
                 </div>
+                
+                <!-- --- NEW FIELD: Rainfall --- -->
+                <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                    <label for="Rainfall" class="font-medium text-gray-700">Rainfall (mm)</label>
+                    <input type="number" step="0.01" class="md:col-span-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" id="Rainfall" name="Rainfall" placeholder="e.g., 150.9 (Optional)">
+                </div>
+
+                <!-- --- NEW FIELD: Soil Type --- -->
+                <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                    <label for="Soil_Type" class="font-medium text-gray-700">Soil Type</label>
+                    <select class="md:col-span-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" id="Soil_Type" name="Soil_Type">
+                        <option value="">Select Soil Type (Optional)</option>
+                        {% for soil in soil_types %}<option value="{{ soil }}">{{ soil }}</option>{% endfor %}
+                    </select>
+                </div>
+
             </div>
 
             <!-- Submit Button -->
