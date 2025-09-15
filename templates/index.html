@@ -1,53 +1,52 @@
 {% extends "layout.html" %}
-{% block title %}Home - Harvest Helper{% endblock %}
+{% block title %}Dashboard - Harvest Helper{% endblock %}
 {% block content %}
-<div class="home-wrapper text-center">
-    <div class="content-box">
-        <h1 class="display-4 fw-bold">Welcome to Harvest Helper</h1>
-        <p class="lead">Your AI-powered assistant for modern farming. Select an option below to get started.</p>
-        <hr class="my-4">
-        <div class="row justify-content-center g-4">
 
-            <!-- Card 1: Crop Recommendation -->
-            <div class="col-lg-3 col-md-6">
-                <a href="/crop-recommend" class="card-link">
-                    <div class="card h-100 shadow-sm feature-card">
-                        <img src="{{ url_for('static', filename='images/crop_icon.png') }}" class="card-img-top" alt="Crop Icon">
-                        <div class="card-body">
-                            <h5 class="card-title">Crop Recommendation</h5>
-                            <p class="card-text">Get recommendations for the best crop to grow based on soil and weather conditions.</p>
-                        </div>
+<!-- THIS IS THE HERO SECTION WITH THE BACKGROUND IMAGE -->
+<section class="relative bg-cover bg-center min-h-[500px] md:min-h-[600px] flex items-center justify-center text-center text-white px-4" 
+         style='background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("{{ url_for('static', filename='images/background.png') }}");'>
+    
+    <div class="max-w-3xl">
+        <h1 class="text-4xl md:text-6xl font-bold tracking-tighter">Welcome to Harvest Helper</h1>
+        <p class="mt-4 text-lg md:text-xl text-white/90">Your ML-powered assistant for modern farming.</p>
+    </div>
+</section>
+
+<!-- This is the section with the three feature cards -->
+<section class="py-16 md:py-24 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Crop Recommendation Card -->
+            <a class="card-hover-effect block bg-gray-50 rounded-lg p-8 text-center border border-gray-200/60" href="{{ url_for('crop_recommend') }}">
+                <div class="flex justify-center mb-4">
+                    <div class="bg-green-100 rounded-full p-4">
+                        <span class="material-symbols-outlined text-4xl text-green-600">grass</span>
                     </div>
-                </a>
-            </div>
-
-            <!-- Card 2: Yield Prediction -->
-            <div class="col-lg-3 col-md-6">
-                <a href="/yield-predict" class="card-link">
-                    <div class="card h-100 shadow-sm feature-card">
-                        <img src="{{ url_for('static', filename='images/yield_icon.png') }}" class="card-img-top" alt="Yield Icon">
-                        <div class="card-body">
-                            <h5 class="card-title">Yield Prediction</h5>
-                            <p class="card-text">Predict the potential yield of your crops based on area, location, and season.</p>
-                        </div>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800">Crop Recommendation</h3>
+                <p class="mt-2 text-gray-600">Get tailored advice on the best crops for your land.</p>
+            </a>
+            <!-- Yield Prediction Card -->
+            <a class="card-hover-effect block bg-gray-50 rounded-lg p-8 text-center border border-gray-200/60" href="{{ url_for('yield_predict') }}">
+                <div class="flex justify-center mb-4">
+                    <div class="bg-green-100 rounded-full p-4">
+                        <span class="material-symbols-outlined text-4xl text-green-600">trending_up</span>
                     </div>
-                </a>
-            </div>
-
-            <!-- Card 3: Fertilizer Recommendation -->
-            <div class="col-lg-3 col-md-6">
-                <a href="/fertilizer-recommend" class="card-link">
-                    <div class="card h-100 shadow-sm feature-card">
-                        <img src="{{ url_for('static', filename='images/pest_icon.png') }}" class="card-img-top" alt="Fertilizer Icon">
-                        <div class="card-body">
-                            <h5 class="card-title">Fertilizer Recommendation</h5>
-                            <p class="card-text">Find the right fertilizer for your crops based on soil composition and other factors.</p>
-                        </div>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800">Yield Prediction</h3>
+                <p class="mt-2 text-gray-600">Predict your crop yields with high accuracy using AI.</p>
+            </a>
+            <!-- Fertilizer Recommendation Card -->
+            <a class="card-hover-effect block bg-gray-50 rounded-lg p-8 text-center border border-gray-200/60" href="{{ url_for('fertilizer_recommend') }}">
+                <div class="flex justify-center mb-4">
+                    <div class="bg-green-100 rounded-full p-4">
+                        <span class="material-symbols-outlined text-4xl text-green-600">science</span>
                     </div>
-                </a>
-            </div>
-
+                </div>
+                <h3 class="text-xl font-bold text-gray-800">Fertilizer Recommendation</h3>
+                <p class="mt-2 text-gray-600">Optimize fertilizer use for health and sustainability.</p>
+            </a>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

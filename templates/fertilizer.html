@@ -1,83 +1,94 @@
 {% extends "layout.html" %}
 {% block title %}Fertilizer Recommendation - Harvest Helper{% endblock %}
 {% block content %}
-<div class="form-wrapper">
-    <div class="form-container shadow-lg">
-        <h2 class="text-center mb-4">Fertilizer Recommendation</h2>
-        <p class="text-center text-muted mb-4">Provide the following details to receive a fertilizer recommendation.</p>
+<div class="py-12 md:py-20 bg-gray-100">
+    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
+        <h2 class="text-3xl font-bold text-center mb-2 text-gray-800">Fertilizer Recommendation</h2>
+        <p class="text-center text-gray-600 mb-8">Provide the following details to receive a fertilizer recommendation.</p>
+        
         <form id="fertilizerForm">
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <label for="Temperature" class="form-label">Temperature (°C)</label>
-                    <input type="number" step="0.01" class="form-control" id="Temperature" name="Temperature" placeholder="e.g., 26" required>
+            <div class="space-y-6">
+                <!-- Temperature -->
+                <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                    <label for="Temperature" class="font-medium text-gray-700">Temperature (°C)</label>
+                    <input type="number" step="0.01" class="md:col-span-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" id="Temperature" name="Temperature" placeholder="e.g., 26" required>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label for="Humidity" class="form-label">Humidity (%)</label>
-                    <input type="number" step="0.01" class="form-control" id="Humidity" name="Humidity" placeholder="e.g., 52" required>
+
+                <!-- Humidity -->
+                <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                    <label for="Humidity" class="font-medium text-gray-700">Humidity (%)</label>
+                    <input type="number" step="0.01" class="md:col-span-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" id="Humidity" name="Humidity" placeholder="e.g., 52" required>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label for="Moisture" class="form-label">Moisture</label>
-                    <input type="number" class="form-control" id="Moisture" name="Moisture" placeholder="e.g., 38" required>
+
+                <!-- Moisture -->
+                <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                    <label for="Moisture" class="font-medium text-gray-700">Moisture</label>
+                    <input type="number" class="md:col-span-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" id="Moisture" name="Moisture" placeholder="e.g., 38" required>
                 </div>
-            </div>
-            
-            <div class="mb-3">
-                <label for="Soil_Type" class="form-label">Soil Type</label>
-                <select class="form-select" id="Soil_Type" name="Soil_Type" required>
-                    <option value="">Select Soil Type</option>
-                    {% for soil in soil_types %}
-                        <option value="{{ soil }}">{{ soil }}</option>
-                    {% endfor %}
-                </select>
+
+                <!-- Soil Type -->
+                <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                    <label for="Soil_Type" class="font-medium text-gray-700">Soil Type</label>
+                    <select class="md:col-span-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" id="Soil_Type" name="Soil_Type" required>
+                        <option value="">Select Soil Type</option>
+                        {% for soil in soil_types %}<option value="{{ soil }}">{{ soil }}</option>{% endfor %}
+                    </select>
+                </div>
+
+                <!-- Crop Type -->
+                <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                    <label for="Crop_Type" class="font-medium text-gray-700">Crop Type</label>
+                    <select class="md:col-span-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" id="Crop_Type" name="Crop_Type" required>
+                        <option value="">Select Crop Type</option>
+                        {% for crop in crop_types %}<option value="{{ crop }}">{{ crop }}</option>{% endfor %}
+                    </select>
+                </div>
+
+                <!-- Nitrogen -->
+                <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                    <label for="Nitrogen" class="font-medium text-gray-700">Nitrogen (N)</label>
+                    <input type="number" class="md:col-span-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" id="Nitrogen" name="Nitrogen" placeholder="e.g., 37" required>
+                </div>
+
+                <!-- Potassium -->
+                <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                    <label for="Potassium" class="font-medium text-gray-700">Potassium (K)</label>
+                    <input type="number" class="md:col-span-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" id="Potassium" name="Potassium" placeholder="e.g., 0" required>
+                </div>
+
+                <!-- Phosphorous -->
+                <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                    <label for="Phosphorous" class="font-medium text-gray-700">Phosphorous (P)</label>
+                    <input type="number" class="md:col-span-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" id="Phosphorous" name="Phosphorous" placeholder="e.g., 0" required>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label for="Crop_Type" class="form-label">Crop Type</label>
-                <select class="form-select" id="Crop_Type" name="Crop_Type" required>
-                    <option value="">Select Crop Type</option>
-                    {% for crop in crop_types %}
-                        <option value="{{ crop }}">{{ crop }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <label for="Nitrogen" class="form-label">Nitrogen (N)</label>
-                    <input type="number" class="form-control" id="Nitrogen" name="Nitrogen" placeholder="e.g., 37" required>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label for="Potassium" class="form-label">Potassium (K)</label>
-                    <input type="number" class="form-control" id="Potassium" name="Potassium" placeholder="e.g., 0" required>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label for="Phosphorous" class="form-label">Phosphorous (P)</label>
-                    <input type="number" class="form-control" id="Phosphorous" name="Phosphorous" placeholder="e.g., 0" required>
-                </div>
-            </div>
-
-            <div class="d-grid">
-                <button type="submit" class="btn btn-primary btn-lg">Get Recommendation</button>
+            <!-- Submit Button -->
+            <div class="mt-8">
+                <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-md hover:bg-green-700 transition-colors">
+                    Get Recommendation
+                </button>
             </div>
         </form>
-        <div id="fertilizerResult" class="mt-4 text-center">
+
+        <div id="fertilizerResult" class="mt-6 text-center">
             <!-- Animation and result will be displayed here -->
         </div>
-        <div class="text-center mt-3">
-            <a href="/" class="btn btn-secondary">Back to Home</a>
+
+        <div class="text-center mt-6">
+            <a href="/" class="text-sm font-medium text-green-600 hover:text-green-500">Back to Home</a>
         </div>
     </div>
 </div>
 
 <script>
+    // JavaScript for form submission and result display
     document.getElementById('fertilizerForm').addEventListener('submit', function (e) {
         e.preventDefault();
-
         const resultDiv = document.getElementById('fertilizerResult');
-        resultDiv.innerHTML = `<div class="spinner-container"><div class="spinner-border text-info" role="status"><span class="visually-hidden">Analyzing...</span></div><p class="mt-2">Finding the best fertilizer...</p></div>`;
+        resultDiv.innerHTML = `<div class="spinner-container"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto"></div><p class="mt-2 text-gray-600">Finding the best fertilizer...</p></div>`;
 
         const formData = new FormData(this);
-
         fetch('/predict_fertilizer', {
             method: 'POST',
             body: formData
@@ -85,13 +96,10 @@
         .then(response => response.json())
         .then(data => {
             if (data.prediction) {
-                resultDiv.innerHTML = `<div class="alert alert-success fade-in"><h4>Recommended Fertilizer:</h4><p class="display-6 fw-bold">${data.prediction}</p></div>`;
+                resultDiv.innerHTML = `<div class="result-box bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"><h4 class="font-bold">Recommended Fertilizer:</h4><p class="text-2xl font-semibold mt-1">${data.prediction}</p></div>`;
             } else {
-                 resultDiv.innerHTML = `<div class="alert alert-danger fade-in"><h4>Error:</h4><p>${data.error || 'An unknown error occurred.'}</p></div>`;
+                 resultDiv.innerHTML = `<div class="result-box bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"><h4>Error:</h4><p>${data.error || 'An unknown error occurred.'}</p></div>`;
             }
-        })
-        .catch(error => {
-            resultDiv.innerHTML = `<div class="alert alert-danger fade-in"><h4>An error occurred:</h4><p>${error}</p></div>`;
         });
     });
 </script>

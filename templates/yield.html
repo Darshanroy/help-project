@@ -1,74 +1,79 @@
 {% extends "layout.html" %}
 {% block title %}Yield Prediction - Harvest Helper{% endblock %}
 {% block content %}
-<div class="form-wrapper">
-    <div class="form-container shadow-lg">
-        <h2 class="text-center mb-4">Crop Yield Prediction</h2>
-        <p class="text-center text-muted mb-4">Enter the following details to predict crop production.</p>
+<div class="py-12 md:py-20 bg-gray-100">
+    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
+        <h2 class="text-3xl font-bold text-center mb-2 text-gray-800">Crop Yield Prediction</h2>
+        <p class="text-center text-gray-600 mb-8">Provide the following details to predict crop production.</p>
+        
         <form id="yieldForm">
-            <div class="mb-3">
-                <label for="Area" class="form-label">Area (in hectares)</label>
-                <input type="number" step="0.01" class="form-control" id="Area" name="Area" placeholder="e.g., 1000" required>
-            </div>
-            
-            <div class="mb-3">
-                <label for="State_Name" class="form-label">State Name</label>
-                <select class="form-select" id="State_Name" name="State_Name" required>
-                    <option value="">Select State</option>
-                    {% for state in states %}
-                        <option value="{{ state }}">{{ state }}</option>
-                    {% endfor %}
-                </select>
+            <div class="space-y-6">
+                <!-- Area -->
+                <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                    <label for="Area" class="font-medium text-gray-700">Area (in hectares)</label>
+                    <input type="number" step="0.01" class="md:col-span-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" id="Area" name="Area" placeholder="e.g., 1000" required>
+                </div>
+
+                <!-- State Name -->
+                <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                    <label for="State_Name" class="font-medium text-gray-700">State Name</label>
+                    <select class="md:col-span-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" id="State_Name" name="State_Name" required>
+                        <option value="">Select State</option>
+                        {% for state in states %}<option value="{{ state }}">{{ state }}</option>{% endfor %}
+                    </select>
+                </div>
+
+                <!-- District Name -->
+                <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                    <label for="District_Name" class="font-medium text-gray-700">District Name</label>
+                    <select class="md:col-span-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" id="District_Name" name="District_Name" required disabled>
+                        <option value="">Select a state first</option>
+                    </select>
+                </div>
+
+                <!-- Season -->
+                <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                    <label for="Season" class="font-medium text-gray-700">Season</label>
+                    <select class="md:col-span-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" id="Season" name="Season" required>
+                        <option value="">Select Season</option>
+                        {% for season in seasons %}<option value="{{ season }}">{{ season }}</option>{% endfor %}
+                    </select>
+                </div>
+
+                <!-- Crop -->
+                <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                    <label for="Crop" class="font-medium text-gray-700">Crop</label>
+                    <select class="md:col-span-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" id="Crop" name="Crop" required>
+                        <option value="">Select Crop</option>
+                        {% for crop in crops %}<option value="{{ crop }}">{{ crop }}</option>{% endfor %}
+                    </select>
+                </div>
             </div>
 
-            <!-- --- NEW: District Dropdown (initially disabled) --- -->
-            <div class="mb-3">
-                <label for="District_Name" class="form-label">District Name</label>
-                <select class="form-select" id="District_Name" name="District_Name" required disabled>
-                    <option value="">Select a state first</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="Season" class="form-label">Season</label>
-                <select class="form-select" id="Season" name="Season" required>
-                    <option value="">Select Season</option>
-                    {% for season in seasons %}
-                        <option value="{{ season }}">{{ season }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="Crop" class="form-label">Crop</label>
-                <select class="form-select" id="Crop" name="Crop" required>
-                    <option value="">Select Crop</option>
-                    {% for crop in crops %}
-                        <option value="{{ crop }}">{{ crop }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="d-grid">
-                <button type="submit" class="btn btn-primary btn-lg">Predict Yield</button>
+            <!-- Submit Button -->
+            <div class="mt-8">
+                <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-md hover:bg-green-700 transition-colors">
+                    Predict Yield
+                </button>
             </div>
         </form>
-        <div id="yieldResult" class="mt-4 text-center">
+
+        <div id="yieldResult" class="mt-6 text-center">
             <!-- Animation and result will be displayed here -->
         </div>
-        <div class="text-center mt-3">
-            <a href="/" class="btn btn-secondary">Back to Home</a>
+
+        <div class="text-center mt-6">
+            <a href="/" class="text-sm font-medium text-green-600 hover:text-green-500">Back to Home</a>
         </div>
     </div>
 </div>
 
 <script>
-    // --- NEW JAVASCRIPT for dynamic dropdowns ---
+    // JavaScript for dynamic district dropdown
     document.getElementById('State_Name').addEventListener('change', function () {
         const selectedState = this.value;
         const districtSelect = document.getElementById('District_Name');
         
-        // Clear and disable district dropdown
         districtSelect.innerHTML = '<option value="">Loading...</option>';
         districtSelect.disabled = true;
 
@@ -84,24 +89,17 @@
                         districtSelect.appendChild(option);
                     });
                     districtSelect.disabled = false;
-                })
-                .catch(error => {
-                    console.error('Error fetching districts:', error);
-                    districtSelect.innerHTML = '<option value="">Could not load districts</option>';
                 });
         } else {
-            // Reset if no state is selected
             districtSelect.innerHTML = '<option value="">Select a state first</option>';
-            districtSelect.disabled = true;
         }
     });
 
-
-    // --- Existing JavaScript for form submission ---
+    // JavaScript for form submission and result display
     document.getElementById('yieldForm').addEventListener('submit', function (e) {
         e.preventDefault();
         const resultDiv = document.getElementById('yieldResult');
-        resultDiv.innerHTML = `<div class="spinner-container"><div class="spinner-border text-success" role="status"><span class="visually-hidden">Calculating yield...</span></div><p class="mt-2">Predicting crop yield...</p></div>`;
+        resultDiv.innerHTML = `<div class="spinner-container"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto"></div><p class="mt-2 text-gray-600">Predicting crop yield...</p></div>`;
         
         const formData = new FormData(this);
         fetch('/predict_yield', {
@@ -111,13 +109,10 @@
         .then(response => response.json())
         .then(data => {
             if (data.prediction !== undefined && data.prediction !== null) {
-                resultDiv.innerHTML = `<div class="alert alert-success fade-in"><h4>Predicted Production:</h4><p class="display-6 fw-bold">${data.prediction} Units</p><p class="text-muted small">Units typically refer to tonnes or units as defined in the dataset.</p></div>`;
+                resultDiv.innerHTML = `<div class="result-box bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"><h4 class="font-bold">Predicted Production:</h4><p class="text-2xl font-semibold mt-1">${data.prediction} Units</p><p class="text-sm text-gray-600 mt-1">Units typically refer to tonnes or units as defined in the dataset.</p></div>`;
             } else {
-                 resultDiv.innerHTML = `<div class="alert alert-danger fade-in"><h4>Error:</h4><p>${data.error || 'An unknown error occurred.'}</p></div>`;
+                 resultDiv.innerHTML = `<div class="result-box bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"><h4>Error:</h4><p>${data.error || 'An unknown error occurred.'}</p></div>`;
             }
-        })
-        .catch(error => {
-            resultDiv.innerHTML = `<div class="alert alert-danger fade-in"><h4>An error occurred:</h4><p>${error}</p></div>`;
         });
     });
 </script>
