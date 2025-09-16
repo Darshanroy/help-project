@@ -58,7 +58,7 @@ This project utilizes three distinct datasets sourced from Kaggle. You must down
 2.  **Crop Production in India Dataset**
     *   **File Name:** `crop_production.csv`
     *   **Description:** A comprehensive dataset of historical crop production data across various states and districts in India. Used for the Yield Prediction model.
-    *   **Download Link:** [Kaggle: Crop Production in India](https://www.kaggle.com/datasets/srinivas1/agricuture-crops-production-in-india)
+    * **Download Link:** [Kaggle: Crop Production in India](https://www.kaggle.com/datasets/darshanroy03/crop-yield-pred)
 
 3.  **Fertilizer Prediction Dataset**
     *   **File Name:** `Fertilizer Prediction.csv`
@@ -78,12 +78,12 @@ Follow these instructions to get a local copy of the project up and running on y
 
 ### Installation Steps
 
-1.  **Clone the Repository:**
+<!-- 1.  **Clone the Repository:**
     Open your terminal and clone the project repository to your local machine.
     ```bash
     git clone https://github.com/your-username/harvest-helper.git
     cd harvest-helper
-    ```
+    ``` -->
 
 2.  **Create a Virtual Environment (Recommended):**
     It's a best practice to create a virtual environment to manage project dependencies.
