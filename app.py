@@ -11,7 +11,7 @@ app = Flask(__name__)
 database.init_db()
 
 # --- MODIFICATION: Use the AUGMENTED file for yield dropdowns ---
-YIELD_DATA_PATH = os.path.join('data', 'crop_production_augmented.csv')
+YIELD_DATA_PATH = os.path.join('data', 'crop_production.csv')
 FERTILIZER_DATA_PATH = os.path.join('data', 'Fertilizer Prediction.csv')
 
 yield_df = pd.read_csv(YIELD_DATA_PATH).dropna(subset=["Production"])
@@ -122,6 +122,27 @@ def history():
         yield_history=yield_logs,
         fertilizer_history=fertilizer_logs
     )
+
+    
+@app.route('/delete_log/<log_type>/<int:log_id>', methods=['DELETE'])
+def delete_log(log_type, log_id):
+    """API endpoint to delete a single log entry."""
+    try:
+        database.delete_log_entry(log_type, log_id)
+        return jsonify({'success': True, 'message': 'Log deleted successfully.'})
+    except Exception as e:
+        print(f"Error deleting log: {e}")
+        return jsonify({'success': False, 'message': 'An error occurred.'}), 500
+
+@app.route('/delete_all/<log_type>', methods=['DELETE'])
+def delete_all(log_type):
+    """API endpoint to delete all logs of a certain type."""
+    try:
+        database.delete_all_logs_for_type(log_type)
+        return jsonify({'success': True, 'message': 'All logs deleted successfully.'})
+    except Exception as e:
+        print(f"Error clearing logs: {e}")
+        return jsonify({'success': False, 'message': 'An error occurred.'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

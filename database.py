@@ -131,3 +131,42 @@ def fetch_fertilizer_logs():
         cursor.execute('SELECT * FROM fertilizer_logs ORDER BY timestamp DESC')
         rows = cursor.fetchall()
         return [dict(row) for row in rows]
+
+
+def delete_log_entry(log_type, log_id):
+    """Deletes a single log entry from a specified table by its ID."""
+    # Whitelist of table names to prevent SQL injection
+    table_map = {
+        'crop': 'crop_logs',
+        'yield': 'yield_logs',
+        'fertilizer': 'fertilizer_logs'
+    }
+    if log_type not in table_map:
+        raise ValueError("Invalid log type specified.")
+    
+    table_name = table_map[log_type]
+
+    with sqlite3.connect(DATABASE_FILE) as conn:
+        cursor = conn.cursor()
+        # Use a parameterized query for safety
+        cursor.execute(f"DELETE FROM {table_name} WHERE id = ?", (log_id,))
+        conn.commit()
+    print(f"Deleted log entry with ID {log_id} from {table_name}.")
+
+def delete_all_logs_for_type(log_type):
+    """Deletes all log entries from a specified table."""
+    table_map = {
+        'crop': 'crop_logs',
+        'yield': 'yield_logs',
+        'fertilizer': 'fertilizer_logs'
+    }
+    if log_type not in table_map:
+        raise ValueError("Invalid log type specified.")
+        
+    table_name = table_map[log_type]
+
+    with sqlite3.connect(DATABASE_FILE) as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"DELETE FROM {table_name}")
+        conn.commit()
+    print(f"Cleared all entries from {table_name}.")

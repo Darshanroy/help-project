@@ -2,130 +2,223 @@
 {% block title %}Prediction History - Harvest Helper{% endblock %}
 {% block content %}
 <div class="py-12 md:py-20 bg-gray-100">
-    <div class="container mx-auto px-4">
+    <div class="container mx-auto px-4" id="historyContainer">
         <h1 class="text-4xl font-bold text-center mb-10 text-gray-800">Prediction History</h1>
 
-        <!-- Crop Recommendation History -->
-        <div class="bg-white p-6 rounded-lg shadow-md mb-10">
-            <h2 class="text-2xl font-bold mb-4 text-gray-700">Crop Recommendation History</h2>
-            {% if crop_history %}
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">P</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">K</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Temp (°C)</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Humidity (%)</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">pH</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rainfall (mm)</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-green-600 uppercase tracking-wider">Prediction</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        {% for log in crop_history %}
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.timestamp.split('.')[0] }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.nitrogen }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.phosphorous }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.potassium }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.temperature }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.humidity }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.ph }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.rainfall }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ log.predicted_crop }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <p class="text-center text-gray-500 py-4">No crop recommendation history found.</p>
-            {% endif %} <!-- FIX: This was missing -->
+        <!-- Tab Navigation -->
+        <div class="mb-4 border-b border-gray-200">
+            <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="historyTabs" role="tablist">
+                <li class="mr-2" role="presentation">
+                    <button class="history-tab inline-block p-4 border-b-2 rounded-t-lg text-green-600 border-green-600" id="crop-tab" data-tabs-target="#crop" type="button" role="tab">Crop Recommendation</button>
+                </li>
+                <li class="mr-2" role="presentation">
+                    <button class="history-tab inline-block p-4 border-b-2 rounded-t-lg border-transparent hover:text-gray-600 hover:border-gray-300" id="yield-tab" data-tabs-target="#yield" type="button" role="tab">Yield Prediction</button>
+                </li>
+                <li class="mr-2" role="presentation">
+                    <button class="history-tab inline-block p-4 border-b-2 rounded-t-lg border-transparent hover:text-gray-600 hover:border-gray-300" id="fertilizer-tab" data-tabs-target="#fertilizer" type="button" role="tab">Fertilizer Recommendation</button>
+                </li>
+            </ul>
         </div>
 
-        <!-- Yield Prediction History -->
-        <div class="bg-white p-6 rounded-lg shadow-md mb-10">
-            <h2 class="text-2xl font-bold mb-4 text-gray-700">Yield Prediction History</h2>
-            {% if yield_history %}
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Area (ha)</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">State</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">District</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Season</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Crop</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-green-600 uppercase tracking-wider">Prediction (Units)</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        {% for log in yield_history %}
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.timestamp.split('.')[0] }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.area }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.state_name }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.district_name }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.season }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.crop }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ log.predicted_yield }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+        <!-- Tab Content -->
+        <div id="historyTabContent">
+            <!-- Crop Recommendation History Panel -->
+            <div class="history-tab-panel p-4 rounded-lg bg-white shadow-md" id="crop" role="tabpanel">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-700">Crop History</h2>
+                    {% if crop_history %}
+                    <button class="delete-all-btn text-sm bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" data-log-type="crop">Delete All</button>
+                    {% endif %}
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200" id="crop-table">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N, P, K</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Temp, Hum, pH, Rain</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-green-600 uppercase tracking-wider">Prediction</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for log in crop_history %}
+                            <tr id="crop-log-{{ log.id }}">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.timestamp.split('.')[0] }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.nitrogen }}, {{ log.phosphorous }}, {{ log.potassium }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.temperature }}°C, {{ log.humidity }}%, {{ log.ph }}, {{ log.rainfall }}mm</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ log.predicted_crop }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm"><button class="delete-log-btn text-red-600 hover:text-red-900" data-log-type="crop" data-log-id="{{ log.id }}">Delete</button></td>
+                            </tr>
+                            {% endfor %}
+                            <tr class="no-history-row {% if crop_history %}hidden{% endif %}">
+                                <td colspan="5" class="text-center text-gray-500 py-4">No crop recommendation history found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            {% else %}
-            <p class="text-center text-gray-500 py-4">No yield prediction history found.</p>
-            {% endif %} <!-- FIX: This was missing -->
-        </div>
 
-        <!-- Fertilizer Recommendation History -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-2xl font-bold mb-4 text-gray-700">Fertilizer Recommendation History</h2>
-            {% if fertilizer_history %}
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Temp (°C)</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Humidity (%)</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Moisture</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Soil Type</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Crop Type</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">K</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">P</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-green-600 uppercase tracking-wider">Prediction</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        {% for log in fertilizer_history %}
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.timestamp.split('.')[0] }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.temperature }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.humidity }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.moisture }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.soil_type }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.crop_type }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.nitrogen }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.potassium }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.phosphorous }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ log.predicted_fertilizer }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <!-- Yield Prediction History Panel -->
+            <div class="history-tab-panel hidden p-4 rounded-lg bg-white shadow-md" id="yield" role="tabpanel">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-700">Yield History</h2>
+                    {% if yield_history %}
+                    <button class="delete-all-btn text-sm bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" data-log-type="yield">Delete All</button>
+                    {% endif %}
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200" id="yield-table">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Area (ha)</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Season & Crop</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-green-600 uppercase tracking-wider">Prediction (Tons)</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for log in yield_history %}
+                            <tr id="yield-log-{{ log.id }}">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.timestamp.split('.')[0] }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.area }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.district_name }}, {{ log.state_name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.season }} - {{ log.crop }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ log.predicted_yield }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm"><button class="delete-log-btn text-red-600 hover:text-red-900" data-log-type="yield" data-log-id="{{ log.id }}">Delete</button></td>
+                            </tr>
+                            {% endfor %}
+                             <tr class="no-history-row {% if yield_history %}hidden{% endif %}">
+                                <td colspan="6" class="text-center text-gray-500 py-4">No yield prediction history found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            {% else %}
-            <p class="text-center text-gray-500 py-4">No fertilizer recommendation history found.</p>
-            {% endif %} <!-- FIX: This was missing -->
+            
+            <!-- Fertilizer Recommendation History Panel -->
+            <div class="history-tab-panel hidden p-4 rounded-lg bg-white shadow-md" id="fertilizer" role="tabpanel">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-700">Fertilizer History</h2>
+                    {% if fertilizer_history %}
+                    <button class="delete-all-btn text-sm bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" data-log-type="fertilizer">Delete All</button>
+                    {% endif %}
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200" id="fertilizer-table">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Conditions</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N, K, P</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-green-600 uppercase tracking-wider">Prediction</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for log in fertilizer_history %}
+                            <tr id="fertilizer-log-{{ log.id }}">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.timestamp.split('.')[0] }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.temperature }}°C, {{ log.humidity }}%, {{ log.moisture }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.soil_type }} - {{ log.crop_type }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ log.nitrogen }}, {{ log.potassium }}, {{ log.phosphorous }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ log.predicted_fertilizer }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm"><button class="delete-log-btn text-red-600 hover:text-red-900" data-log-type="fertilizer" data-log-id="{{ log.id }}">Delete</button></td>
+                            </tr>
+                            {% endfor %}
+                            <tr class="no-history-row {% if fertilizer_history %}hidden{% endif %}">
+                                <td colspan="6" class="text-center text-gray-500 py-4">No fertilizer recommendation history found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
     </div>
 </div>
+
+<script>
+    // --- JavaScript for Tab Functionality ---
+    const tabs = document.querySelectorAll('.history-tab');
+    const tabPanels = document.querySelectorAll('.history-tab-panel');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Deactivate all tabs and panels
+            tabs.forEach(t => {
+                t.classList.remove('text-green-600', 'border-green-600');
+                t.classList.add('border-transparent', 'hover:text-gray-600', 'hover:border-gray-300');
+            });
+            tabPanels.forEach(p => p.classList.add('hidden'));
+
+            // Activate the clicked tab and its corresponding panel
+            tab.classList.add('text-green-600', 'border-green-600');
+            tab.classList.remove('border-transparent', 'hover:text-gray-600', 'hover:border-gray-300');
+            const targetPanel = document.querySelector(tab.dataset.tabsTarget);
+            if (targetPanel) {
+                targetPanel.classList.remove('hidden');
+            }
+        });
+    });
+
+    // --- JavaScript for Deletion Functionality ---
+    const historyContainer = document.getElementById('historyContainer');
+    
+    historyContainer.addEventListener('click', function(e) {
+        // --- Handle Single Log Deletion ---
+        if (e.target.classList.contains('delete-log-btn')) {
+            const button = e.target;
+            const logType = button.dataset.logType;
+            const logId = button.dataset.logId;
+            
+            if (confirm(`Are you sure you want to delete this ${logType} log?`)) {
+                fetch(`/delete_log/${logType}/${logId}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const row = document.getElementById(`${logType}-log-${logId}`);
+                        if (row) {
+                            row.remove();
+                            // Check if the table body is now empty
+                            const tableBody = document.querySelector(`#${logType}-table tbody`);
+                            if (tableBody.querySelectorAll('tr:not(.no-history-row)').length === 0) {
+                                tableBody.querySelector('.no-history-row').classList.remove('hidden');
+                            }
+                        }
+                    } else {
+                        alert('Error deleting log: ' + data.message);
+                    }
+                });
+            }
+        }
+        
+        // --- Handle "Delete All" for a Log Type ---
+        if (e.target.classList.contains('delete-all-btn')) {
+            const button = e.target;
+            const logType = button.dataset.logType;
+            
+            if (confirm(`Are you sure you want to delete ALL ${logType} history? This action cannot be undone.`)) {
+                fetch(`/delete_all/${logType}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const tableBody = document.querySelector(`#${logType}-table tbody`);
+                        // Remove all data rows
+                        tableBody.querySelectorAll('tr:not(.no-history-row)').forEach(row => row.remove());
+                        // Show the 'no history' message
+                        tableBody.querySelector('.no-history-row').classList.remove('hidden');
+                        button.remove(); // Remove the delete all button as there's nothing left to delete
+                    } else {
+                        alert('Error deleting logs: ' + data.message);
+                    }
+                });
+            }
+        }
+    });
+
+</script>
 {% endblock %}

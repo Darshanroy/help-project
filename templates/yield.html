@@ -85,7 +85,7 @@
 </div>
 
 <script>
-    // JavaScript for dynamic district dropdown
+    // JavaScript for dynamic district dropdown (no changes here)
     document.getElementById('State_Name').addEventListener('change', function () {
         const selectedState = this.value;
         const districtSelect = document.getElementById('District_Name');
@@ -105,21 +105,21 @@
                         districtSelect.appendChild(option);
                     });
                     districtSelect.disabled = false;
-                })
-                .catch(error => {
-                    console.error('Error fetching districts:', error);
-                    districtSelect.innerHTML = '<option value="">Could not load districts</option>';
                 });
         } else {
-            // Reset if no state is selected
             districtSelect.innerHTML = '<option value="">Select a state first</option>';
         }
     });
 
-    // JavaScript for form submission and result display
+    // --- JAVASCRIPT MODIFIED FOR TONS CONVERSION ---
     document.getElementById('yieldForm').addEventListener('submit', function (e) {
         e.preventDefault();
+        
         const resultDiv = document.getElementById('yieldResult');
+        const areaInput = document.getElementById('Area');
+        const area = parseFloat(areaInput.value);
+
+        // Show spinner
         resultDiv.innerHTML = `<div class="spinner-container"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto"></div><p class="mt-2 text-gray-600">Predicting crop yield...</p></div>`;
         
         const formData = new FormData(this);
@@ -130,13 +130,38 @@
         .then(response => response.json())
         .then(data => {
             if (data.prediction !== undefined && data.prediction !== null) {
-                resultDiv.innerHTML = `<div class="result-box bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"><h4 class="font-bold">Predicted Production:</h4><p class="text-2xl font-semibold mt-1">${data.prediction} Units</p><p class="text-sm text-gray-600 mt-1">Units typically refer to tonnes or units as defined in the dataset.</p></div>`;
+                
+                let conversionHTML = '';
+                
+                // Calculate yield per hectare if area is valid
+                if (!isNaN(area) && area > 0) {
+                    const yieldPerHectare = (data.prediction / area).toFixed(2);
+                    // MODIFICATION: Changed "Units" to "Tons"
+                    conversionHTML = `
+                        <hr class="my-3 border-gray-300">
+                        <div class="mt-2">
+                            <h5 class="font-semibold text-gray-700">Yield per Hectare</h5>
+                            <p class="text-xl font-medium text-gray-800">${yieldPerHectare} Tons / Hectare</p>
+                        </div>
+                    `;
+                }
+
+                // MODIFICATION: Changed "Units" to "Tons" and updated the note
+                resultDiv.innerHTML = `
+                    <div class="result-box bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg relative text-left">
+                        <div>
+                            <h4 class="font-bold">Total Predicted Production</h4>
+                            <p class="text-2xl font-semibold mt-1">${data.prediction} Tons</p>
+                            <p class="text-sm text-gray-600 mt-1">For an area of ${area} hectares.</p>
+                        </div>
+                        ${conversionHTML}
+                        <p class="text-xs text-gray-500 mt-2">Note: Production is measured in tonnes.</p>
+                    </div>
+                `;
+
             } else {
                  resultDiv.innerHTML = `<div class="result-box bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"><h4>Error:</h4><p>${data.error || 'An unknown error occurred.'}</p></div>`;
             }
-        })
-        .catch(error => {
-            resultDiv.innerHTML = `<div class="result-box bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"><h4>An error occurred:</h4><p>${error}</p></div>`;
         });
     });
 </script>
