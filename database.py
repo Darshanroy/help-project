@@ -1,8 +1,10 @@
 import sqlite3
 import datetime
+import os
+
 
 # Define the database file name
-DATABASE_FILE = 'harvest_helper.db'
+DATABASE_FILE = os.path.join('database','harvest_helper.db')
 
 def init_db():
     """Initializes the database and creates tables if they don't exist."""

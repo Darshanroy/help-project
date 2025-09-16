@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import pandas as pd
 import os
 import database
+import json 
 
 from prediction_pipeline import predict_crop
 from yield_prediction_pipeline import predict_crop_yield
@@ -123,7 +124,7 @@ def history():
         fertilizer_history=fertilizer_logs
     )
 
-    
+
 @app.route('/delete_log/<log_type>/<int:log_id>', methods=['DELETE'])
 def delete_log(log_type, log_id):
     """API endpoint to delete a single log entry."""
@@ -143,6 +144,44 @@ def delete_all(log_type):
     except Exception as e:
         print(f"Error clearing logs: {e}")
         return jsonify({'success': False, 'message': 'An error occurred.'}), 500
+
+@app.route('/model_details')
+def model_details():
+    """Renders the model details page, loading data from the performance JSON file."""
+    performance_data = {}
+    # --- MODIFICATION: Update path to models directory ---
+    performance_file_path = os.path.join('models', 'model_performance.json')
+    try:
+        with open(performance_file_path, 'r') as f:
+            performance_data = json.load(f)
+    except FileNotFoundError:
+        print("Performance file not found. It will be created after the first training run.")
+    
+    return render_template('model_details.html', performance=performance_data)
+
+# --- NEW ROUTE: Trigger Training ---
+@app.route('/train_models', methods=['POST'])
+def train_models_endpoint():
+    """API endpoint to trigger the training of all models."""
+    try:
+        # Import the training functions here to avoid circular imports if structured differently
+        from training_pipeline import train_crop_model
+        from yield_training_pipeline import train_yield_model
+        from fertilizer_training_pipeline import train_fertilizer_model
+        
+        print("--- Starting Crop Model Training ---")
+        train_crop_model()
+        print("--- Starting Yield Model Training ---")
+        train_yield_model()
+        print("--- Starting Fertilizer Model Training ---")
+        train_fertilizer_model()
+        
+        return jsonify({'success': True, 'message': 'All models trained successfully.'})
+    except Exception as e:
+        print(f"Error during training: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
